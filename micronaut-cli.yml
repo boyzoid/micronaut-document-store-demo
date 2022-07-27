@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.boyzoid
+testFramework: junit
+sourceLanguage: groovy
+buildTool: gradle
+features: [ annotation-api, app-name, gradle, groovy, groovy-application, http-client, jackson-databind, junit, logback, micronaut-build, netty-server, readme, shade, yaml ]

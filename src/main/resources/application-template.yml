@@ -1,0 +1,14 @@
+micronaut:
+  application:
+    name: mnDocStoreDemo
+netty:
+  default:
+    allocator:
+      max-order: 3
+mysql:
+  user: user
+  password: password
+  host: localhost
+  port: 33060
+greeting:
+  message: Hello from Micronaut
