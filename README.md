@@ -1,16 +1,11 @@
-## Micronaut 3.5.3 Documentation
+# Micronaut Demo with MySQL Document Store
 
-- [User Guide](https://docs.micronaut.io/3.5.3/guide/index.html)
-- [API Reference](https://docs.micronaut.io/3.5.3/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/3.5.3/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
+A demo for using Micronaut to access a MySQL Document Store
 
----
+## Setup
 
-- [Shadow Gradle Plugin](https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow)
+This setup assumes you already have access to a MySQL database.
 
-## Feature http-client documentation
-
-- [Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
-
-
+* Copy the `src/main/resources/application-template.yml` file to `src/main/resources/application-dev.yml` and fill in the values for the database config under the `demo` block.
+* Run the command ` ./gradlew run` in the main directory
+* Make a GET call to `localhost:8080/init` to load data into the database.

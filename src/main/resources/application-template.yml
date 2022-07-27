@@ -5,10 +5,10 @@ netty:
   default:
     allocator:
       max-order: 3
-mysql:
+demo:
   user: user
   password: password
   host: localhost
   port: 33060
-greeting:
-  message: Hello from Micronaut
+  schema: mn_demo
+  collection: scores
