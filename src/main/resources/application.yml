@@ -1,0 +1,14 @@
+micronaut:
+  application:
+    name: docStoreMnDemo
+netty:
+  default:
+    allocator:
+      max-order: 3
+demo:
+  user: scott
+  password: ''
+  host: localhost
+  port: 33060
+  schema: mn_demo
+  collection: scores
