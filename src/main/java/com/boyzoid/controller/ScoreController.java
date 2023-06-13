@@ -2,16 +2,11 @@ package com.boyzoid.controller;
 
 import com.boyzoid.service.ScoreService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.mysql.cj.xdevapi.JsonArray;
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Produces;
-import org.json.simple.parser.ParseException;
+import io.micronaut.http.annotation.*;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
@@ -72,6 +67,29 @@ public class ScoreController {
     public HttpResponse<Object>getAggregateCourseScore() throws JsonProcessingException {
         ArrayList<Object> scores = scoreService.getAggregateCourseScore();
         return HttpResponse.ok(getResult(scores));
+    }
+    @Post( value="/score", produces = MediaType.APPLICATION_JSON)
+    public HttpResponse<Object>addScore(@Body JSONObject score){
+        Boolean success = scoreService.addScore(score.toJSONString());
+        LinkedHashMap result = new LinkedHashMap();
+        result.put("success", success);
+        return HttpResponse.ok(result);
+    }
+
+    @Post( value="/holeScores", produces = MediaType.APPLICATION_JSON)
+    public HttpResponse<Object>addHoleScores(@Body String score) throws IOException{
+        Boolean success = scoreService.addHoleScores(score);
+        LinkedHashMap result = new LinkedHashMap();
+        result.put("success", success);
+        return HttpResponse.ok(result);
+    }
+
+    @Get(value = "/removeScore/{id}", produces = MediaType.APPLICATION_JSON)
+    public HttpResponse<Object>removeScore(String id) throws JsonProcessingException {
+        Boolean success = scoreService.removeScore(id);
+        LinkedHashMap result = new LinkedHashMap();
+        result.put("success", success);
+        return HttpResponse.ok(result);
     }
 
     private static LinkedHashMap getResult(ArrayList<?> scores){

@@ -4,10 +4,15 @@ import com.boyzoid.config.DocumentStoreConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.*;
+import io.micronaut.json.tree.JsonObject;
 import jakarta.inject.Singleton;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Singleton
 public class ScoreService {
@@ -112,10 +117,6 @@ public class ScoreService {
         Collection col = schema.getCollection(this.collection);
         DocResult result = col.find("lower(lastName) like :lastNameParam")
                 .bind("lastNameParam", lastName.toLowerCase()+"%")
-                .fields("concat(firstName, \" \", lastName) as golfer, " +
-                        "score as score, " +
-                        "course.name as course, " +
-                        "`date` as datePlayed")
                 .sort("lastName, firstName, `date` desc")
                 .execute();
         ArrayList<Object> docs = cleanResults(result.fetchAll());
@@ -165,6 +166,59 @@ public class ScoreService {
         session.close();
         return docs;
     }
+
+    public Boolean addScore(String score) {
+        Boolean success = true;
+        Session session = getSession();
+        Schema schema = session.getSchema(this.schema);
+        Collection col = schema.getCollection(this.collection);
+        try {
+            col.add(score).execute();
+        }
+        catch (Exception e) {
+            success = false;
+        }
+        session.close();
+        return success;
+    }
+    public Boolean addHoleScores(String data) throws IOException {
+        DbDoc doc = JsonParser.parseDoc(data);
+        JsonArray holeScores = JsonParser.parseArray(new StringReader(doc.get("holeScores").toString()));
+        var id = doc.get("_id");
+        Boolean success = true;
+        Session session = getSession();
+        Schema schema = session.getSchema(this.schema);
+        Collection col = schema.getCollection(this.collection);
+        try {
+            col.modify("_id = :idParam")
+                    .set("holeScores", holeScores )
+                    .bind("idParam", id)
+                    .execute();
+        }
+        catch (Exception e) {
+            success = false;
+        }
+        session.close();
+        return success;
+    }
+
+    public Boolean removeScore(String id)  {
+        Boolean success = true;
+        Session session = getSession();
+        Schema schema = session.getSchema(this.schema);
+        Collection col = schema.getCollection(this.collection);
+        try {
+            col.remove("_id = :idParam")
+                    .bind("idParam", id)
+                    .execute();
+        }
+        catch (Exception e) {
+            success = false;
+        }
+        session.close();
+        return success;
+    }
+
 
     private Session getSession(){
         return cli.getSession();
