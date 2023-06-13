@@ -5,7 +5,7 @@ netty:
   default:
     allocator:
       max-order: 3
-demo:
+docstore:
   user: scott
   password: ''
   host: localhost
