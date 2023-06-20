@@ -3,6 +3,7 @@ package com.boyzoid.controller;
 import com.boyzoid.service.ScoreService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -71,31 +72,22 @@ public class ScoreController {
     @Post( value="/score", produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Object>addScore(@Body JSONObject score){
         Boolean success = scoreService.addScore(score.toJSONString());
-        LinkedHashMap result = new LinkedHashMap();
-        result.put("success", success);
-        return HttpResponse.ok(result);
+        return HttpResponse.ok(CollectionUtils.mapOf("success", success));
     }
 
     @Post( value="/holeScores", produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Object>addHoleScores(@Body String score) throws IOException{
         Boolean success = scoreService.addHoleScores(score);
-        LinkedHashMap result = new LinkedHashMap();
-        result.put("success", success);
-        return HttpResponse.ok(result);
+        return HttpResponse.ok(CollectionUtils.mapOf("success", success));
     }
 
     @Get(value = "/removeScore/{id}", produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Object>removeScore(String id) throws JsonProcessingException {
         Boolean success = scoreService.removeScore(id);
-        LinkedHashMap result = new LinkedHashMap();
-        result.put("success", success);
-        return HttpResponse.ok(result);
+        return HttpResponse.ok(CollectionUtils.mapOf("success", success));
     }
 
-    private static LinkedHashMap getResult(ArrayList<?> scores){
-        LinkedHashMap result = new LinkedHashMap();
-        result.put("count", scores.size());
-        result.put("scores", scores);
-        return result;
+    private static Map getResult(ArrayList<?> scores){
+        return CollectionUtils.mapOf("count", scores.size(), "scores", scores);
     }
 }

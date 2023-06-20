@@ -4,15 +4,14 @@ import com.boyzoid.config.DocumentStoreConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.*;
-import io.micronaut.json.tree.JsonObject;
+import io.micronaut.core.util.CollectionUtils;
 import jakarta.inject.Singleton;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class ScoreService {
@@ -24,7 +23,7 @@ public class ScoreService {
     private String schema;
     private String collection;
 
-    public ScoreService(DocumentStoreConfig documentStoreConfig) {
+    public ScoreService(DocumentStoreConfig documentStoreConfig) throws JsonProcessingException {
         this.documentStoreConfig = documentStoreConfig;
         this.url = "mysqlx://" + documentStoreConfig.getUser() +
                 ":" + documentStoreConfig.getPassword() +
@@ -33,7 +32,15 @@ public class ScoreService {
                 "/" + documentStoreConfig.getSchema();
         this.schema = documentStoreConfig.getSchema();
         this.collection = documentStoreConfig.getCollection();
-        this.cli = clientFactory.getClient(this.url, "{\"pooling\":{\"enabled\":true, \"maxSize\":8,\"maxIdleTime\":30000, \"queueTimeout\":10000} }");
+        Map options = CollectionUtils.mapOf(
+                "pooling", CollectionUtils.mapOf(
+                        "enabled", true,
+                        "maxSize", 8,
+                        "maxIdleTime", 30000,
+                        "queueTimeout", 10000
+                        )
+        );
+        this.cli = clientFactory.getClient(this.url, objectMapper.writeValueAsString(options));
     }
 
     public ArrayList<Object> getAllScores() throws JsonProcessingException {
